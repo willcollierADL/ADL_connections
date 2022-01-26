@@ -12,6 +12,7 @@ with open(os.path.join(os.path.split(__file__)[0], 'requirements.txt')) as f:
 print(reqs)
 
 setup(name='ADL_connections',
+      version=0.1,
       description='Provides wrapper for ADL database connection.',
       url='https://github.com/willcollierADL/ADL_connections',
       author='ADL Smartcare',
