@@ -40,5 +40,14 @@ def run_sql(sql_loc, cursor, sql_vars=None):
     return cursor, cursor.fetchall()
 
 
+def run_sql_text_query(query, cursor):
+    try:
+        cursor.execute(query)
+        return cursor, cursor.fetchall()
+    except TypeError as e:
+        print("The entered query must be in a string format")
+        raise e
+
+
 def row_to_df(rows, cursor):
     return pd.DataFrame.from_records(rows, columns=[d[0] for d in cursor.description])

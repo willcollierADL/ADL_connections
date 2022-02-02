@@ -1,1 +1,1 @@
-from .sql_connection import get_connection, run_sql, row_to_df
+from .sql_connection import get_connection, run_sql, run_sql_text_query, row_to_df
