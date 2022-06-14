@@ -4,7 +4,13 @@ import pandas as pd
 
 
 def get_connection(config_path, config_section='DEFAULT', use_database=False):
-
+    """
+    Connect to the database
+    :param config_path: path for the configuration file which contains the connection information
+    :param config_section: which section of the config file to use
+    :param use_database: connect using the database name
+    :return:
+    """
     config = configparser.ConfigParser()
     config.read(config_path)
 
@@ -30,7 +36,6 @@ def get_connection(config_path, config_section='DEFAULT', use_database=False):
                               database=database)
 
     else:
-
         cnxn = pyodbc.connect(server=server,
                               user=username,
                               tds_version=tds_version,
@@ -43,6 +48,13 @@ def get_connection(config_path, config_section='DEFAULT', use_database=False):
 
 
 def run_sql(sql_loc, cursor, sql_vars=None):
+    """
+    load query from file, add any variables and run it
+    :param sql_loc: location of the sql file
+    :param cursor: the cursor object for the database connection from get connection
+    :param sql_vars: variables to add into the sql file text {}
+    :return:
+    """
     with open(sql_loc) as query:
         sql = query.read()
 
@@ -55,6 +67,12 @@ def run_sql(sql_loc, cursor, sql_vars=None):
 
 
 def run_sql_text_query(query, cursor):
+    """
+    Pass a query directly into the cursor in text format
+    :param query: text query for execution
+    :param cursor: cursor from the get connection
+    :return:
+    """
     try:
         cursor.execute(query)
         return cursor, cursor.fetchall()
@@ -64,6 +82,12 @@ def run_sql_text_query(query, cursor):
 
 
 def row_to_df(rows, cursor):
+    """
+    Convert the rows returned from a query into a pandas dataframe
+    :param rows: returns data from cursor.fetchall in run sql functions
+    :param cursor: cursor object
+    :return:
+    """
     return pd.DataFrame.from_records(rows, columns=[d[0] for d in cursor.description])
 
 
