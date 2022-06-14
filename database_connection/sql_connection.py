@@ -47,14 +47,20 @@ def get_connection(config_path, config_section='DEFAULT', use_database=False):
     return cnxn, cnxn.cursor()
 
 
-def run_sql(sql_loc, cursor, sql_vars=None):
+def run_sql(sql_loc, cursor, sql_vars=None, commit_change=False, connection=None):
     """
     load query from file, add any variables and run it
+    :param connection: the pyodbc connection object, required for a commit
+    :param commit_change: if the
     :param sql_loc: location of the sql file
     :param cursor: the cursor object for the database connection from get connection
     :param sql_vars: variables to add into the sql file text {}
     :return:
     """
+
+    if commit_change and not connection:
+        raise AttributeError('to commit changes the connection object is required')
+
     with open(sql_loc) as query:
         sql = query.read()
 
@@ -62,8 +68,10 @@ def run_sql(sql_loc, cursor, sql_vars=None):
         cursor.execute(sql.format(**sql_vars))
     else:
         cursor.execute(sql)
-
-    return cursor, cursor.fetchall()
+    if commit_change:
+        connection.commit()
+    else:
+        return cursor, cursor.fetchall()
 
 
 def run_sql_text_query(query, cursor):
@@ -91,7 +99,7 @@ def row_to_df(rows, cursor):
     return pd.DataFrame.from_records(rows, columns=[d[0] for d in cursor.description])
 
 
-def drop_table(cursor, database_name, table_name):
+def drop_table(connection, cursor, database_name, table_name):
     """
     Drop a table in the database which has been connected to
     :param cursor:
@@ -100,4 +108,4 @@ def drop_table(cursor, database_name, table_name):
     """
     sql = f'DROP TABLE IF EXISTS [{database_name}].[dbo].[{table_name}]'
     cursor.execute(sql)
-
+    connection.commit()
