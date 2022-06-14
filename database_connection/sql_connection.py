@@ -3,7 +3,7 @@ import pyodbc
 import pandas as pd
 
 
-def get_connection(config_path, config_section='DEFAULT'):
+def get_connection(config_path, config_section='DEFAULT', use_database=False):
 
     config = configparser.ConfigParser()
     config.read(config_path)
@@ -15,16 +15,30 @@ def get_connection(config_path, config_section='DEFAULT'):
     driver = config[config_section]['driver']
     tds_version = config[config_section]['tds_version']
     port = config[config_section]['port']
-    Encrypt = True
+    encrypt = True
 
-    cnxn = pyodbc.connect(server=server,
-                          user=username,
-                          tds_version=tds_version,
-                          password=password,
-                          port=port,
-                          driver=driver,
-                          Trusted_connection=trusted_connection,
-                          Encrypt=Encrypt)
+    if use_database:
+        database = config[config_section]['database']
+        cnxn = pyodbc.connect(server=server,
+                              user=username,
+                              tds_version=tds_version,
+                              password=password,
+                              port=port,
+                              driver=driver,
+                              Trusted_connection=trusted_connection,
+                              Encrypt=encrypt,
+                              database=database)
+
+    else:
+
+        cnxn = pyodbc.connect(server=server,
+                              user=username,
+                              tds_version=tds_version,
+                              password=password,
+                              port=port,
+                              driver=driver,
+                              Trusted_connection=trusted_connection,
+                              Encrypt=encrypt)
     return cnxn, cnxn.cursor()
 
 
