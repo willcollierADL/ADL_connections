@@ -51,3 +51,15 @@ def run_sql_text_query(query, cursor):
 
 def row_to_df(rows, cursor):
     return pd.DataFrame.from_records(rows, columns=[d[0] for d in cursor.description])
+
+
+def drop_table(cursor, database_name, table_name):
+    """
+    Drop a table in the database which has been connected to
+    :param cursor:
+    :param table_name:
+    :return:
+    """
+    sql = f'DROP TABLE IF EXISTS [{database_name}].[dbo].[{table_name}]'
+    cursor.execute(sql)
+
