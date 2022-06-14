@@ -51,8 +51,6 @@ def run_sql(cursor,
             query=None,
             sql_loc=None,
             sql_vars=None,
-            commit_change=False,
-            connection=None,
             fetch_results=True):
     """
     load query from file, add any variables and run it
@@ -66,9 +64,6 @@ def run_sql(cursor,
     :return:
     """
 
-    if commit_change and not connection:
-        raise AttributeError('to commit changes the connection object is required')
-
     if query and type(query) != str:
         raise TypeError("The entered query must be in a string format")
 
@@ -80,9 +75,7 @@ def run_sql(cursor,
 
     cursor.execute(query)
 
-    if commit_change:
-        connection.commit()
-    elif fetch_results:
+    if fetch_results:
         return cursor, cursor.fetchall()
 
 
