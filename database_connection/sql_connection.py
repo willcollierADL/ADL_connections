@@ -47,9 +47,17 @@ def get_connection(config_path, config_section='DEFAULT', use_database=False):
     return cnxn, cnxn.cursor()
 
 
-def run_sql(sql_loc, cursor, sql_vars=None, commit_change=False, connection=None):
+def run_sql(cursor,
+            query=None,
+            sql_loc=None,
+            sql_vars=None,
+            commit_change=False,
+            connection=None,
+            fetch_results=True):
     """
     load query from file, add any variables and run it
+    :param fetch_results: get results using crsr fetchall
+    :param query: a string query for direct execution
     :param connection: the pyodbc connection object, required for a commit
     :param commit_change: if the
     :param sql_loc: location of the sql file
@@ -61,32 +69,39 @@ def run_sql(sql_loc, cursor, sql_vars=None, commit_change=False, connection=None
     if commit_change and not connection:
         raise AttributeError('to commit changes the connection object is required')
 
-    with open(sql_loc) as query:
-        sql = query.read()
+    if query and type(query) != str:
+        raise TypeError("The entered query must be in a string format")
 
-    if sql_vars:
-        cursor.execute(sql.format(**sql_vars))
-    else:
-        cursor.execute(sql)
+    if not query:
+        with open(sql_loc) as sql_file:
+            query = sql_file.read()
+        if sql_vars:
+            query = query.format(**sql_vars)
+
+    cursor.execute(query)
+
     if commit_change:
         connection.commit()
-    else:
+    elif fetch_results:
         return cursor, cursor.fetchall()
 
 
-def run_sql_text_query(query, cursor):
+def run_sql_text_query(query, cursor, commit_change=False, connection=None):
     """
     Pass a query directly into the cursor in text format
     :param query: text query for execution
     :param cursor: cursor from the get connection
     :return:
     """
-    try:
+    if type(query) != str:
+        raise TypeError("The entered query must be in a string format")
+
+    if commit_change:
+        cursor.execute(query)
+        connection.commit()
+    else:
         cursor.execute(query)
         return cursor, cursor.fetchall()
-    except TypeError as e:
-        print("The entered query must be in a string format")
-        raise e
 
 
 def row_to_df(rows, cursor):
