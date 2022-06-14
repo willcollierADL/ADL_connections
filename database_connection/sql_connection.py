@@ -117,3 +117,22 @@ def drop_table(connection, cursor, database_name, table_name):
     sql = f'DROP TABLE IF EXISTS [{database_name}].[dbo].[{table_name}]'
     cursor.execute(sql)
     connection.commit()
+
+
+def delete_records(connection, cursor, database_name, table_name, record_column, records_remove_string):
+    """
+
+    :param connection:
+    :param cursor:
+    :param database_name:
+    :param table_name:
+    :param record_column:
+    :param records_remove_string:
+    :return:
+    """
+    cursor.execute(f'''
+                    DELETE FROM [{database_name}].[dbo].[{table_name}] 
+                    WHERE {record_column} in ({records_remove_string})
+                   ''')
+    connection.commit()
+
