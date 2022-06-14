@@ -11,7 +11,7 @@ def get_connection(config_path, config_section='DEFAULT'):
     server = config[config_section]['host']
     username = config[config_section]['user']
     password = config[config_section]['password']
-    Trusted_Connection = config[config_section]['trusted_connection']
+    trusted_connection = config[config_section]['trusted_connection']
     driver = config[config_section]['driver']
     tds_version = config[config_section]['tds_version']
     port = config[config_section]['port']
@@ -23,7 +23,7 @@ def get_connection(config_path, config_section='DEFAULT'):
                           password=password,
                           port=port,
                           driver=driver,
-                          Trusted_connection=Trusted_Connection,
+                          Trusted_connection=trusted_connection,
                           Encrypt=Encrypt)
     return cnxn, cnxn.cursor()
 
