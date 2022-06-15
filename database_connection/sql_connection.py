@@ -119,15 +119,17 @@ def drop_table(connection, cursor, database_name, table_name):
     connection.commit()
 
 
-def delete_records(connection, cursor, database_name, table_name, record_column, records_remove_string):
+def delete_records(connection, cursor,
+                   database_name: str, table_name: str,
+                   record_column: str, records_remove_string: str):
     """
 
-    :param connection:
-    :param cursor:
-    :param database_name:
-    :param table_name:
-    :param record_column:
-    :param records_remove_string:
+    :param connection: pyodbc connection object
+    :param cursor: pyodbc connection.cursor()
+    :param database_name: string for database name
+    :param table_name: string of the table name
+    :param record_column: which column contains the data to match
+    :param records_remove_string: which row to remove (val in record column)
     :return:
     """
     cursor.execute(f'''
@@ -136,3 +138,26 @@ def delete_records(connection, cursor, database_name, table_name, record_column,
                    ''')
     connection.commit()
 
+
+def turn_data_into_insert(dataframe: pd.DataFrame, table_name: str, database_name: str, columns: list = None):
+    """
+    dataframe columns MUST match the columns in the table if columns=None,
+    otherwise specify the columns in the order they are in the df
+    """
+    data_string = ''
+
+    for row in dataframe.itertuples():
+        row_string = '(' + ", ".join([str(elem) if type(elem) != str else f"'{elem}'" for elem in row[1:]]) + ')'
+        if data_string != '':
+            data_string = data_string + ', ' + row_string
+        else:
+            data_string = data_string + row_string
+
+    if not columns:
+        columns = ', '.join([str(col) for col in dataframe.columns])
+
+    insert_query = f"""
+                    INSERT INTO [{database_name}].[dbo].[{table_name}] ({columns})
+                    VALUES
+                            {data_string}"""
+    return insert_query
