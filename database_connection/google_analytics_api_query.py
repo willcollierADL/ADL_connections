@@ -82,7 +82,7 @@ def ga_api_caller(ga_key_file, query):
         while next_page_token:
             query['reportRequests'][0]['pageToken'] = next_page_token
             next_page_response_raw_data = service.reports().batchGet(body=query).execute()
-            response_data.extend(next_page_response_raw_data['reports'][0].get('data', []))
+            response_data['rows'].extend(next_page_response_raw_data['reports'][0]['data'].get('rows', []))
     else:
         e_mess = "This only works for single queries, add functionality for multiple queries if thats what you like"
         raise TypeError(e_mess)
