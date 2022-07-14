@@ -105,20 +105,3 @@ def ga_api_caller(ga_key_file, query):
 
     df_report = (pd.concat([df_metric, df_pivot], axis=1))
     return df_report
-
-
-if __name__ == "__main__":
-    with open('../view_id.json') as file:
-        your_view_id = json.load(file)['view_id']
-    body_device = {'reportRequests': [{'viewId': your_view_id,
-                                       'dateRanges': [{'startDate': '2022-04-01', 'endDate': '2022-04-30'}],
-                                       'dimensions': [{'name': 'ga:deviceCategory'},
-                                                      {'name': 'ga:browser'},
-                                                      {'name': 'ga:mobileDeviceModel'}]
-                                       }]}
-
-    ga_keys = '../reporting_access_key.json'
-
-    df_report = ga_api_caller(ga_key_file=ga_keys,
-                              query=body_device)
-    print(df_report.head())
