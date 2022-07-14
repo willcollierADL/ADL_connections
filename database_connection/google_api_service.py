@@ -5,16 +5,16 @@ from googleapiclient.discovery import build
 from google.auth.transport.requests import Request
 
 
-def create_service_client(client_secret_file, api_name, api_version, *scopes, prefix=''):
+def create_service_client(client_secret_file, api_name, api_version, scope, prefix=''):
     CLIENT_SECRET_FILE = client_secret_file
     API_SERVICE_NAME = api_name
     API_VERSION = api_version
-    SCOPES = [scope for scope in scopes[0]]
+    SCOPE = scope
 
     cred = None
     working_dir = os.getcwd()
     token_dir = 'token files'
-    pickle_file = f'token_{API_SERVICE_NAME}_{API_VERSION}{prefix}.pickle'
+    pickle_file = f"token_{API_SERVICE_NAME}_{API_VERSION}{scope.split('/')[-1]}{prefix}.pickle"
 
     ### Check if token dir exists first, if not, create the folder
     if not os.path.exists(os.path.join(working_dir, token_dir)):
@@ -28,7 +28,7 @@ def create_service_client(client_secret_file, api_name, api_version, *scopes, pr
         if cred and cred.expired and cred.refresh_token:
             cred.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRET_FILE, SCOPES)
+            flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRET_FILE, [SCOPE])
             cred = flow.run_local_server()
 
         with open(os.path.join(working_dir, token_dir, pickle_file), 'wb') as token:
