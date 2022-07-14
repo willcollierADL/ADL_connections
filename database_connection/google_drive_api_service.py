@@ -22,7 +22,8 @@ class GoogleDriveService:
                   'https://www.googleapis.com/auth/drive.metadata',
                   'https://www.googleapis.com/auth/drive.photos.readonly'
                   ]
-        if self.scope not in scopes:
+        scope_exists = [scope in scopes for scope in self.scope]
+        if False in scope_exists:
             raise ValueError(
                 'Please choose a scope from the list at https://developers.google.com/drive/api/v3/reference/permissions/list')
         else:
