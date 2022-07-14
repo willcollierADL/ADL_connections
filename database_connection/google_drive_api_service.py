@@ -24,11 +24,12 @@ class GoogleDriveService:
                   'https://www.googleapis.com/auth/drive.photos.readonly'
                   ]
         scope_exists = self.scope in scopes
-        if False in scope_exists:
+        if scope_exists:
+            return create_service_client(self.client_file, api_name, api_version, self.scope)
+        else:
             raise ValueError(
                 'Please choose a scope from the list at https://developers.google.com/drive/api/v3/reference/permissions/list')
-        else:
-            return create_service_client(self.client_file, api_name, api_version, self.scope)
+
 
     def ls(self, folder_id):
         query = f"parents = '{folder_id}'"
