@@ -9,7 +9,7 @@ class GoogleDriveService:
 
     def __init__(self, client_file, scope, include_shared_drive=False):
         self.client_file = client_file
-        self.scope = scope if type(scope) == list else [scope]
+        self.scope = scope
         self.service = self.create_service()
         self.include_shared_drive = include_shared_drive
 
