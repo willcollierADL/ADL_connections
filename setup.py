@@ -13,7 +13,7 @@ print(reqs)
 
 setup(name='ADL_connections',
       version='0.1',
-      description='Provides wrapper for ADL database connection.',
+      description='Provides wrapper for ADL to connect to database or cloud services',
       url='https://github.com/willcollierADL/ADL_connections',
       author='ADL Smartcare',
       license='MIT',
