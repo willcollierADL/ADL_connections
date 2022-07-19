@@ -30,7 +30,6 @@ class GoogleDriveService:
             raise ValueError(
                 'Please choose a scope from the list at https://developers.google.com/drive/api/v3/reference/permissions/list')
 
-
     def ls(self, folder_id):
         query = f"parents = '{folder_id}'"
         results = self.service.files().list(pageSize=10,
