@@ -59,8 +59,7 @@ class GoogleAnalyticsService:
         df_report = (pd.concat([df_metric, df_pivot], axis=1))
         return df_report
 
-    @staticmethod
-    def metric_report_df(response):
+    def metric_report_df(self, response):
         # extract column names
         summary_column_names = [item['name'] for item in response['reports'][0]
         ['columnHeader']['metricHeader']['metricHeaderEntries']]
@@ -76,8 +75,7 @@ class GoogleAnalyticsService:
                             index=row_index_named,
                             columns=summary_column_names).astype('float')
 
-    @staticmethod
-    def pivot_report_df(response):
+    def pivot_report_df(self, response):
         # extract table values
         pivot_values = [item['metrics'][0]['pivotValueRegions'][0]['values'] for item in
                         response['reports'][0]['data']['rows']]
